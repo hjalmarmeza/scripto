@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ToolType, OverlayElement, PageData } from '../types';
-import { performOCR } from '../services/geminiService';
+import { performOCR } from '../services/deepinfraService';
 
 interface TranscriptionEditorProps {
   originalImage: string;
