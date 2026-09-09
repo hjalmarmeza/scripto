@@ -817,13 +817,15 @@ const TranscriptionEditor: React.FC<TranscriptionEditorProps> = ({
           runningY += p.height + GAP;
       }
 
+      // Convert pixels to points for jsPDF (1px = 0.75pt) to avoid px_scaling bugs
+      const pxToPt = 0.75;
+
       // Initialize PDF with the dimensions of the FIRST page
       const firstPage = pages[0];
       const pdf = new jsPDF({
           orientation: firstPage.width > firstPage.height ? 'l' : 'p',
-          unit: 'px',
-          format: [firstPage.width, firstPage.height],
-          hotfixes: ["px_scaling"]
+          unit: 'pt',
+          format: [firstPage.width * pxToPt, firstPage.height * pxToPt]
       });
 
       // Process Pages
@@ -834,7 +836,7 @@ const TranscriptionEditor: React.FC<TranscriptionEditorProps> = ({
         // Add new page for subsequent iterations (i > 0)
         if (i > 0) {
             pdf.addPage(
-                [page.width, page.height],
+                [page.width * pxToPt, page.height * pxToPt],
                 page.width > page.height ? 'l' : 'p'
             );
         }
@@ -906,7 +908,7 @@ const TranscriptionEditor: React.FC<TranscriptionEditorProps> = ({
 
         // 4. Add to PDF
         const pageData = canvas.toDataURL('image/jpeg', 0.95); // High quality
-        pdf.addImage(pageData, 'JPEG', 0, 0, page.width, page.height);
+        pdf.addImage(pageData, 'JPEG', 0, 0, page.width * pxToPt, page.height * pxToPt);
       }
 
       // 5. Final Output Action
